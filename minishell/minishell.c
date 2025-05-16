@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kadir <kadir@student.42.fr>                +#+  +:+       +#+        */
+/*   By: akutludo <akutludo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 14:49:45 by akutludo          #+#    #+#             */
-/*   Updated: 2025/05/15 22:13:59 by kadir            ###   ########.fr       */
+/*   Updated: 2025/05/16 16:50:29 by akutludo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,10 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-/* Küçük renk makroları (isteğe bağlı) */
 #define CLR_WORD   "\033[0;32m"
 #define CLR_OP     "\033[0;33m"
 #define CLR_RESET  "\033[0m"
 
-/* Token tipini sembole çevir (debug amaçlı) */
 static const char *tok_name(t_toktype t)
 {
 	if (t == T_WORD)       return "WORD";
@@ -50,12 +48,12 @@ int	main(void)
 	while (1)
 	{
 		line = readline("minishell> ");
-		if (!line)               /* Ctrl-D */
+		if (!line)
 		{
 			printf("exit\n");
 			break;
 		}
-		if (*line)               /* boş değilse history'e ekle */
+		if (*line)
 			add_history(line);
 
 		tokens = lexer(line);
@@ -64,7 +62,6 @@ int	main(void)
 		else
 			print_tokens(tokens);
 
-		/* temizlik */
 		tok_clear(&tokens);
 		free(line);
 	}

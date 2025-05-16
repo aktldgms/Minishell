@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: akutludo <akutludo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/16 16:47:27 by akutludo          #+#    #+#             */
+/*   Updated: 2025/05/16 16:47:29 by akutludo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 static void flush_buf(t_token **lst, char **buf, int quoted)
@@ -47,7 +59,6 @@ static t_token	*lex_word(char *line)
 	while (line[i])
 	{
 		char c = line[i];
-		/*  -------- STATE MACHINE ---------- */
 		if (state == S_ESC)
 		{ str_append(&buf, c); state = S_DEFAULT; }
 		else if (c == '\\' && state != S_IN_SQ)
@@ -65,7 +76,6 @@ static t_token	*lex_word(char *line)
 		else if ((c == '|' || c == '<' || c == '>') && state == S_DEFAULT)
 		{
 			flush_buf(&list, &buf, 0);
-			/* iki karakterli mi diye bak */
 			if ((c == '>' && line[i+1] == '>') || (c == '<' && line[i+1] == '<'))
 			{
 				tok_add_back(&list, tok_new(c == '>' ? ">>" : "<<",

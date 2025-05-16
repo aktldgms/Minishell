@@ -1,10 +1,17 @@
 /* ************************************************************************** */
-/*                                token_utils.c                               */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: akutludo <akutludo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/16 16:47:17 by akutludo          #+#    #+#             */
+/*   Updated: 2025/05/16 16:47:19 by akutludo         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-/* malloc + alan kopyalama */
 static char	*tok_strdup(const char *s)
 {
 	size_t	i = 0;
@@ -19,7 +26,6 @@ static char	*tok_strdup(const char *s)
 	return (dup);
 }
 
-/* --------- public fonksiyonlar ------------------------------------------ */
 t_token	*tok_new(char *text, t_toktype type, int quoted)
 {
 	t_token	*node;

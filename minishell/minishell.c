@@ -3,49 +3,70 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akutludo <akutludo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kadir <kadir@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 14:49:45 by akutludo          #+#    #+#             */
-/*   Updated: 2025/05/11 16:40:55 by akutludo         ###   ########.fr       */
+/*   Updated: 2025/05/15 22:13:59 by kadir            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <readline/readline.h>
+#include <readline/history.h>
 
-int main (int argc, char **argv, char **env)
+/* Küçük renk makroları (isteğe bağlı) */
+#define CLR_WORD   "\033[0;32m"
+#define CLR_OP     "\033[0;33m"
+#define CLR_RESET  "\033[0m"
+
+/* Token tipini sembole çevir (debug amaçlı) */
+static const char *tok_name(t_toktype t)
 {
-    printf("\n---------- THIS IS MY SHELL ----------\n\n");
-    printf("this is argc: %d\n", argc);
-    printf("this is argv: ");
-    int i = -1;
-    while (argv[++i])
-    {
-        if (argv[i + 1])
-            printf("%s, ", argv[i]);
-        else
-            printf("%s\n", argv[i]);
-    }
-    i = -1;
-    while(!ft_strnstr(env[++i], "PATH=", 5))
-        ;
-    printf("this is env: ");
-    printf("%s\n", env[i] + 5);
-    printf("\n--------------------------------------\n\n");
-    i = -1;
-    while(!ft_strnstr(env[++i], "USER=", 5))
-        ;
-    char *username = ft_strdup(env[i] + 5);
-    char *line;
-    while(1)
-    {
-        printf("%s", username);
-        line = readline("@minishell$ ");
-        if (!ft_strncmp(line, "exit", ft_strlen(line)))
-            break;
-        free(line);
-    }
-    free(username);
-    free(line);
-    return (0);
+	if (t == T_WORD)       return "WORD";
+	if (t == T_PIPE)       return "PIPE";
+	if (t == T_REDIR_IN)   return "RD_IN";
+	if (t == T_REDIR_OUT)  return "RD_OUT";
+	if (t == T_APPEND)     return "APPEND";
+	if (t == T_HEREDOC)    return "HEREDOC";
+	return "UNK";
+}
+
+static void	print_tokens(t_token *lst)
+{
+	while (lst)
+	{
+		const char *clr = (lst->type == T_WORD) ? CLR_WORD : CLR_OP;
+		printf("%s%-8s%s : \"%s\"\n",
+			   clr, tok_name(lst->type), CLR_RESET, lst->text);
+		lst = lst->next;
+	}
+}
+
+int	main(void)
+{
+	char	*line;
+	t_token	*tokens;
+
+	while (1)
+	{
+		line = readline("minishell> ");
+		if (!line)               /* Ctrl-D */
+		{
+			printf("exit\n");
+			break;
+		}
+		if (*line)               /* boş değilse history'e ekle */
+			add_history(line);
+
+		tokens = lexer(line);
+		if (!tokens)
+			fprintf(stderr, "lexer error (quote/escape?)\n");
+		else
+			print_tokens(tokens);
+
+		/* temizlik */
+		tok_clear(&tokens);
+		free(line);
+	}
+	return (0);
 }

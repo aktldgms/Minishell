@@ -3,7 +3,7 @@ CC      := cc
 CFLAGS  := -Wall -Wextra -Werror
 INCS    := -Ilibft -Iincludes
 
-SRC     := minishell/minishell.c
+SRC     := minishell/minishell.c splitters/token.c splitters/lexer.c
 OBJ     := $(SRC:.c=.o)
 
 LIBFT_DIR   := libs/libft
